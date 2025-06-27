@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:invms_app/features/developer_portal/screens/api_key_screen.dart';
 import 'package:invms_app/features/developer_portal/screens/developer_portal.dart';
 import 'package:invms_app/features/login/login_screen.dart';
 import 'package:invms_app/shared/error_screen.dart';
@@ -20,7 +21,6 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(_authCubit.stream),
     debugLogDiagnostics: true, // Useful for debugging routing issues
     initialLocation: '/login', // Start at the login page
-
     // Define all the routes for your application
     routes: [
       GoRoute(
@@ -32,6 +32,14 @@ class AppRouter {
         name: 'developer_portal',
         path: '/developer',
         builder: (context, state) => const DeveloperPortalScreen(),
+        // Add a sub-route for API keys
+        routes: [
+          GoRoute(
+            name: 'api_keys',
+            path: 'keys', // This becomes /developer/keys
+            builder: (context, state) => const ApiKeyScreen(),
+          ),
+        ],
       ),
       GoRoute(
         name: 'inventory_saas',
@@ -43,7 +51,7 @@ class AppRouter {
     // This function runs before every navigation action
     redirect: (BuildContext context, GoRouterState state) {
       final authState = context.read<AuthCubit>().state;
-      
+
       // Get the path the user is trying to access
       final onLoginPage = state.matchedLocation == '/login';
 
@@ -61,7 +69,7 @@ class AppRouter {
       // In all other cases, let them go where they intended.
       return null;
     },
-    
+
     // This is the screen that will be shown if a route is not found
     errorBuilder: (context, state) => ErrorScreen(error: state.error),
   );

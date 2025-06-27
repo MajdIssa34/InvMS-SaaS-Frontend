@@ -14,11 +14,12 @@ class AuthService {
 
   // Public factory for creation
   static Future<AuthService> create() async {
-    const String keycloakUrl = 'https://auth.invms.xyz/realms/advanced-inventory-management-system';
+    const String keycloakUrl =
+        'https://auth.invms.xyz/realms/advanced-inventory-management-system';
     const String clientId = 'inventory-client';
     const List<String> scopes = ['openid', 'profile', 'email'];
-    final Uri redirectUri = Uri.parse('http://localhost:3000');
-
+    final Uri redirectUri = Uri.parse('https://api.invms.xyz/');
+    
     final issuer = await Issuer.discover(Uri.parse(keycloakUrl));
     final client = Client(issuer, clientId);
     final provider = createAuthProvider(client, scopes, redirectUri);
@@ -51,7 +52,10 @@ class AuthService {
     credential = await _provider.processLogin();
     if (credential != null) {
       // If we got one, save it for next time.
-      await _secureStorage.write(key: 'credential', value: json.encode(credential.toJson()));
+      await _secureStorage.write(
+        key: 'credential',
+        value: json.encode(credential.toJson()),
+      );
     }
     return credential;
   }
